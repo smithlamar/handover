@@ -1,0 +1,3 @@
+# Local development handoff docs — dev artifacts, not part of the shipped skill.
+# (Does not match the shipped example-handoff-*.md files.)
+handoff-*.md
