@@ -1,6 +1,6 @@
-# Local development handoff docs — dev artifacts, not part of the shipped skill.
-# (Does not match the shipped example-handoff-*.md files.)
-handoff-*.md
-
-# Machine-specific deploy script (copies shipped files to the local skills dir).
-deploy.ps1
+# IntelliJ / JetBrains IDE files.
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
