@@ -5,7 +5,7 @@ that turns "wrap up and hand off this session" into a repeatable workflow: clean
 stale handoff docs, write a structured new one that leads with a self-contained
 brief, persist it, and hand you a short one-line command to resume in a fresh
 session. It also handles the other end of the baton — resuming work from a handoff
-doc.
+doc — and the final lap: cleaning up the handover artifacts once the work is done.
 
 ## Why this exists
 
@@ -53,6 +53,15 @@ triggers the skill deterministically — into a fresh session, the same skill re
 the doc's **Resume here** brief, follows the read order, verifies the starting
 state against reality, and resumes the work.
 
+## Cleaning up
+
+When the work a handover tracked is totally done — no successor session follows —
+say `/handover cleanup` (or "clean up the handover docs"). The skill finds the
+handover artifacts it has first-hand context on, verifies the work is actually
+complete — if anything looks unfinished, it enumerates each outstanding item and
+asks you to confirm before deleting — then removes the docs and reports what went
+and what it left alone. No new handoff is written; cleanup closes the loop.
+
 ## Files
 
 - `SKILL.md` — the skill itself (metadata + workflow). This is what Claude loads.
@@ -93,7 +102,9 @@ re-copy over the same location.
 
 Start a fresh session and ask it to "prep a handoff" — it should run the workflow.
 To test the other direction, point a fresh session at a handoff doc with
-`Pickup handover <file>` and confirm it reads the brief and resumes.
+`Pickup handover <file>` and confirm it reads the brief and resumes. To test
+cleanup, say `/handover cleanup` in a session whose work is done and confirm it
+verifies completion before deleting anything.
 
 ## License
 

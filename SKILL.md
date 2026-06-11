@@ -1,6 +1,6 @@
 ---
 name: handover
-description: Produces a session handoff document that leads with a self-contained "Resume here" brief, and resumes work from one. Use to PRODUCE a handoff when the user asks to "prep a handoff", "do a handover", "hand off", or "wrap up the session" — covers cleaning up stale handoff docs, writing the new one (resume brief, pickup state, accomplishments, next objective, execution guardrails, deferred items, working-tree state), persisting it, and handing the user a short pickup line. Use to RESUME when the user says "Pickup handover <file>", "pick up handover <file>", or "/handover <file>" — or points a fresh session at a handoff doc — reads the brief, follows the read order, verifies the starting state, and continues the work. The argument disambiguates: a handoff filename means RESUME; a stated goal (or no argument) means PRODUCE.
+description: Produces a session handoff document that leads with a self-contained "Resume here" brief, resumes work from one, and cleans up handover artifacts once the work is done. Use to PRODUCE when the user asks to "prep a handoff", "do a handover", "hand off", or "wrap up the session" — retires stale handoff docs, writes the new one, persists it, and hands back a short pickup line. Use to RESUME when the user says "Pickup handover <file>" or "/handover <file>" — reads the brief, follows the read order, verifies the starting state, and continues the work. Use to CLEAN UP when the work a handover tracked is totally done and no successor session follows — "/handover cleanup" or "clean up the handover docs" — verifies completion (enumerating anything outstanding for explicit confirmation), then deletes the artifacts in its jurisdiction; no new handoff is written. The argument disambiguates: a handoff filename means RESUME; the literal "cleanup" means CLEAN UP; a stated goal (or no argument) means PRODUCE.
 ---
 
 # Handover
@@ -10,10 +10,12 @@ this conversation, or a human teammate — resume work without re-deriving what
 already happened. The successor's only inputs are the handoff doc and whatever it
 points to, so the doc must be specific and self-contained.
 
-This skill covers both ends of a handover: **producing** one (Steps 1–3 below) and
-**resuming** from one (see "Resuming from a handoff" at the end). If the user is
-pointing a fresh session at an existing handoff doc — e.g. "pick up handover
-<file>" — skip to that section.
+This skill covers the full lifecycle of a handover: **producing** one (Steps 1–3
+below), **resuming** from one, and **cleaning up** once the work a handover tracked
+is fully done (both covered at the end). If the user is pointing a fresh session at
+an existing handoff doc — e.g. "pick up handover <file>" — skip to "Resuming from a
+handoff". If they're saying the work is done and the artifacts should go — e.g.
+"/handover cleanup" — skip to "Cleaning up a finished handover".
 
 ## The next session's goal is a required input
 
@@ -270,7 +272,8 @@ goal):
 This is the consume side. When the user says "Pickup handover <file>", "pick up
 handover <file>", "/handover <file>" (or points a fresh session at a handoff doc),
 resume the prior work. The argument is the discriminator: a handoff filename means
-resume; a stated goal means produce a new handoff (Steps 1–3 above).
+resume; the literal `cleanup` means clean up (next section); a stated goal (or
+nothing) means produce a new handoff (Steps 1–3 above).
 
 1. **Locate the doc.** Use the name the user gave. If they gave a partial name or
    none, look in the usual places (`docs/handoff-*.md`, `docs/v*-handoff.md`,
@@ -288,6 +291,48 @@ resume; a stated goal means produce a new handoff (Steps 1–3 above).
    proceeding; the handoff may be stale or a step didn't land.
 5. **Restate the goal and your first steps, then continue**, respecting the
    handoff's execution guideline (pause vs. proceed).
+
+## Cleaning up a finished handover
+
+This is the close-out side. When the user says "/handover cleanup", "clean up the
+handover docs", or otherwise signals that the work a handover tracked is **totally
+done** — no successor session follows — delete the handover artifacts and close the
+loop. Unlike the produce path, no new handoff doc is written: there is nothing left
+to hand over. This differs from Step 1 (which retires *stale* handoffs while
+producing a new one); cleanup is the terminal step after the final session of
+the workstream.
+
+Copy this checklist and track progress:
+
+```
+Cleanup progress:
+- [ ] Find the handover artifacts in jurisdiction
+- [ ] Verify the work is complete (enumerate outstanding items + confirm if not)
+- [ ] Delete + persist (match how the docs were tracked)
+- [ ] Report what was removed and what was left alone
+```
+
+1. **Find the artifacts.** The handoff doc that started or steered this session
+   (the resume source) is the primary target. Then check wherever the project
+   keeps them (`docs/handoff-*.md`, `docs/v*-handoff.md`, `HANDOFF.md`).
+   Jurisdiction follows Step 1's deletion rules: only docs you have first-hand
+   context on — created in this session, or referenced in the prompt that started
+   it. Any other handoff-shaped doc: leave it and flag it for the user to clear.
+   Living reference docs (design plans, tracking tables, architecture notes, audit
+   logs) are off-limits, as always.
+2. **Verify the work is actually complete.** Check each doc's objective and
+   deferred items against reality before deleting. If anything looks unfinished —
+   open objectives, deferred items never picked up, incomplete tasks in the
+   session — don't delete yet: enumerate each outstanding item with a concise
+   brief (enough for the user to judge it or pick it up later), and ask for
+   explicit confirmation that they want to clean up anyway. Deferred work may be
+   intentionally abandoned — but that's the user's call to make, not yours.
+3. **Delete and persist.** Match how the docs were tracked: if they're committed,
+   stage the deletions as a single docs-only commit (e.g.
+   `docs: remove consumed handoff(s)`); if untracked or gitignored, just delete
+   the files.
+4. **Report.** List what was deleted, what was left alone (and why), and any
+   outstanding items the user chose to drop.
 
 ## Notes
 
