@@ -26,6 +26,23 @@ If the request doesn't state a goal, ask for it before writing — a one-line in
 is enough. The goal headlines the doc's **Resume here** brief, drives the
 **Objective** section, and calibrates the detail of everything else (see Step 2).
 
+## Carry context forward — don't do the next session's work
+
+Producing a handoff is an act of *preserving* context before it's cleared, not of
+spending it. The goal belongs to the **successor**; the current session's job is to
+distill what it already knows into the doc, not to start executing the objective.
+Doing the next session's substantive work now burns the very context the handoff
+exists to conserve — and usually does it worse, against an already-full context
+window near the end of its useful life.
+
+Light validation that makes the handoff *trustworthy* is fair game — confirming a
+path exists, a command runs, the branch and HEAD are what you claim. But the
+analysis, design, or implementation the goal calls for should be reserved for the
+successor. When you catch yourself digging into the problem rather than describing
+it, stop and package the lead instead: what to do, where to look, and what is already
+known. A handoff that hands over a clear objective and the context to act on it has
+done its job; it does not need to have started the job.
+
 Run all three steps below in order. Don't stop after one or two and wait for
 confirmation unless a step is genuinely blocked (see each step's stop conditions).
 
