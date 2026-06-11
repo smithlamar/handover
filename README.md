@@ -7,6 +7,36 @@ brief, persist it, and hand you a short one-line command to resume in a fresh
 session. It also handles the other end of the baton — resuming work from a handoff
 doc — and the final lap: cleaning up the handover artifacts once the work is done.
 
+## Contents
+
+- [Usage](#usage)
+- [Why this exists](#why-this-exists)
+- [Prepping a handoff](#prepping-a-handoff)
+- [Resuming](#resuming)
+- [Cleaning up](#cleaning-up)
+- [Files](#files)
+- [Installing](#installing)
+- [Verify](#verify)
+- [License](#license)
+
+## Usage
+
+One command, three flavors — the argument picks the phase:
+
+- `/handover <describe next session goal>` — prep a handoff doc for that goal and hand
+  back a one-line pickup command. The goal is required — invoked without one,
+  the skill asks for it before writing.
+- `/handover <file>` — resume in a fresh session: read the doc's brief, verify
+  the starting state, continue the work.
+- `/handover cleanup` — verify the tracked work is completely done, then delete
+  the handover artifacts; use when no successor session follows.
+
+Natural language works too: "prep a handoff", "hand off", or "wrap up the
+session" prep one; `Pickup handover <file>` resumes; "clean up the handover
+docs" cleans up. The slash forms are just the deterministic spelling — a
+filename argument means resume, the literal `cleanup` means clean up, and
+anything else (or nothing) means prep.
+
 ## Why this exists
 
 A long session's context window keeps growing, and you pay for that prefix on every
@@ -23,10 +53,9 @@ knows for the successor to act on. It deliberately doesn't start solving the nex
 goal: spending the current context doing the next session's work defeats the point of
 preserving it.
 
-## What it does
+## Prepping a handoff
 
-When you say "prep a handoff" / "do a handover" / "hand off" / "wrap up the
-session", the skill runs three steps:
+Prepping runs three steps:
 
 1. **Clean up stale handoff docs** — retire ones whose work has shipped, leave
    living reference docs (and in-flight handoffs) alone.
@@ -35,8 +64,8 @@ session", the skill runs three steps:
    what-this-cycle-accomplished, next objective, an execution guideline (when to
    pause vs. proceed), deferred items, and working-tree state.
 3. **Persist + hand you the pickup line** — commit the docs (or leave them
-   untracked, your call), then give you a short line to paste into a fresh session:
-   `Pickup handover <file>` (or the deterministic slash form, `/handover <file>`).
+   untracked, your call), then give you the short pickup line to paste into a
+   fresh session.
 
 The point of a handoff is that the successor has *zero memory* of the prior
 session, so the doc must be specific and self-contained — every assumption spelled
@@ -48,23 +77,22 @@ forgetting to copy a prompt.
 
 ## Resuming
 
-When you paste `Pickup handover <file>` — or the slash form `/handover <file>`, which
-triggers the skill deterministically — into a fresh session, the same skill reads
-the doc's **Resume here** brief, follows the read order, verifies the starting
-state against reality, and resumes the work.
+In the fresh session, the same skill reads the doc's **Resume here** brief,
+follows the read order, verifies the starting state against reality, and resumes
+the work.
 
 ## Cleaning up
 
-When the work a handover tracked is totally done — no successor session follows —
-say `/handover cleanup` (or "clean up the handover docs"). The skill finds the
-handover artifacts it has first-hand context on, verifies the work is actually
-complete — if anything looks unfinished, it enumerates each outstanding item and
-asks you to confirm before deleting — then removes the docs and reports what went
-and what it left alone. No new handoff is written; cleanup closes the loop.
+The skill finds the handover artifacts it has first-hand context on, verifies the
+work is actually complete — if anything looks unfinished, it enumerates each
+outstanding item and asks you to confirm before deleting — then removes the docs
+and reports what went and what it left alone. No new handoff is written; cleanup
+closes the loop.
 
 ## Files
 
 - `SKILL.md` — the skill itself (metadata + workflow). This is what Claude loads.
+- `README.md` — this file.
 - `example-handoff-implementation.md` — worked example: an "implement the design we
   finished" handoff that carries the agreed contract forward inline.
 - `example-handoff-investigation.md` — worked example: a "continue the
@@ -79,24 +107,9 @@ Claude Code discovers skills from two locations:
   with collaborators)
 
 This repository's root *is* the skill (it contains `SKILL.md`), so install it by
-copying the repo's contents to `<skills-dir>/handover/`. From inside your clone:
-
-```sh
-# Personal, all projects (macOS / Linux)
-cp -r . ~/.claude/skills/handover
-
-# Or scoped to one project
-cp -r . <your-project>/.claude/skills/handover
-```
-
-On Windows (PowerShell):
-
-```powershell
-Copy-Item -Recurse . "$env:USERPROFILE\.claude\skills\handover"
-```
-
-The skill loads at the start of the next session. To pick up a newer version,
-re-copy over the same location.
+copying the repo's contents to `<skills-dir>/handover/` — however you prefer to
+copy files. The skill loads at the start of the next session. To pick up a newer
+version, re-copy over the same location.
 
 ## Verify
 
