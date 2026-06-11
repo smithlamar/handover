@@ -18,6 +18,11 @@ the next session — a fresh agent, you tomorrow, or a colleague — resumes fro
 deliberate brief instead of a lossy auto-summary. The file is the artifact native
 compaction never leaves you.
 
+That packaging is *all* the producing session does — it distills what it already
+knows for the successor to act on. It deliberately doesn't start solving the next
+goal: spending the current context doing the next session's work defeats the point of
+preserving it.
+
 ## What it does
 
 When you say "prep a handoff" / "do a handover" / "hand off" / "wrap up the
