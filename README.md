@@ -26,7 +26,8 @@ One command, three flavors — the argument picks the phase:
 - `/handover <describe next session goal>` — prep a handoff doc for that goal and hand
   back a one-line pickup command. The goal is required — invoked without one,
   the skill asks for it before writing.
-- `/handover <file>` — resume in a fresh session: read the doc's brief, verify
+- `/handover <file>` — resume in a fresh session after `/clear` (which destroys
+  the old session's context and starts a new one): read the doc's brief, verify
   the starting state, continue the work.
 - `/handover cleanup` — verify the tracked work is completely done, then delete
   the handover artifacts; use when no successor session follows.
