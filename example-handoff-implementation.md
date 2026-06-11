@@ -21,6 +21,9 @@
 ## Pickup state
 - **Repo:** `customer-api`, branch `design/customer-stats-api`, HEAD `c4e1a07`,
   version `0.4.0`.
+- **Recent commits:**
+  - `c4e1a07` Document the stats contract decisions
+  - `d4f9b21` Add CustomerStats types + CustomerStatsRepository trait
 - The domain types and the repository trait are committed as the **agreed
   contract** (`d4f9b21`). There is **no implementation** behind the trait — the
   method is unimplemented on purpose; wiring it up is the objective below.

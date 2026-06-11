@@ -23,6 +23,9 @@
 - **Repo:** `orders-service`, branch `investigate/p99-latency`, HEAD `a1b9f3c`,
   version `2.14.0` (unchanged this cycle — no deploy; everything below reproduces
   against the current build).
+- **Recent commits:**
+  - `a1b9f3c` Add enrichment profile to the load-test harness
+  - `9c07d12` Add heap-diff script + baseline profile capture
 - **Reproduction is set up and reliable.** `make load-test PROFILE=enrichment`
   drives the p99 spike within ~90s. The heap snapshot tooling is wired
   (`scripts/heap-diff.sh`) — attach the profiler on pickup.

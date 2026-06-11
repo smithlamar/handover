@@ -79,9 +79,9 @@ the step silently.
 ## Step 2: Write the new handoff doc
 
 - **Follow a documented convention if one exists.** If the project records where
-  handoffs live and how they're named (e.g. in its `CLAUDE.md`, or a handoffs
-  folder's README), follow that directly — don't rediscover it by grepping and
-  reading old docs.
+  handoffs live and how they're named (e.g. in its contributor or agent
+  instructions, or a handoffs folder's README), follow that directly — don't
+  rediscover it by grepping and reading old docs.
 - **Otherwise name it** `docs/handoff-<YYYY-MM-DD>.md`, or match the pattern any
   existing handoffs use.
 - **The structure below is the format** — you don't need to reverse-engineer it
@@ -109,6 +109,11 @@ demands.
   the detail, point to it (path + the sections to read, in order) instead of
   restating it. Pull only the load-bearing snippets inline — the ones the successor
   needs to act before opening every reference.
+- **Include every reference the successor needs, wherever it lives.** Design docs,
+  tracking tables, the relevant changelog entry, an external spec or runbook — if
+  it helps the goal, put it in the read order whether it sits inside the project or
+  outside it. Skip files the successor's session loads automatically (they'd be
+  noise, not signal).
 - **Persist decisions that live only in the conversation.** A design, an approach,
   or a rationale that was worked out in chat is lost to the successor unless the
   handoff records it. Either capture it in the handoff doc or write it to a
@@ -165,7 +170,8 @@ Use this structure (adapt section names to the project's existing handoffs):
   on disk".>
 
 ## Pickup state
-- Repo / branch / HEAD commit / version (or "not a git repo — state is files on disk").
+- Repo / branch / HEAD commit / version, plus the last few commit subjects (or "not
+  a git repo — state is files on disk").
 - Anything the successor must know to even start: build version, live environment,
   what to attach to or open first, the orientation entry-point doc.
 
