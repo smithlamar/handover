@@ -114,6 +114,37 @@ demands.
   handoff records it. Either capture it in the handoff doc or write it to a
   durable doc and link that. Don't assume the next session can reconstruct it.
 
+### Label confidence — separate what's proven from what's assumed
+
+A handoff is read as fact. Anything you write without qualification, the successor
+takes as established and builds on — so an unlabeled hunch becomes a false premise it
+chases down a dead end, burning a whole cycle. The fix is cheap: keep proven and
+assumed visibly distinct. What matters most is flagging the load-bearing claims that
+are **not** fully verified — the unlabeled assumption is the one that does damage. A
+fact that's a given or a settled decision doesn't strictly need a label (though one
+never hurts); the priority is that no hunch is ever mistaken for proven.
+
+- **Proven / verified** — you confirmed it this session. State *how* you know — the
+  command you ran, the file and line you read, the behavior you reproduced — so the
+  successor can re-check in seconds rather than re-derive from scratch.
+- **Assumption / hunch / provisional** — plausible but unconfirmed. Carry it (leads
+  are valuable), but label it as a lead, not a finding, and where you can, note what
+  would confirm or refute it, how much rests on it being true, and — in brief — where
+  it came from (the observation or reasoning that prompted it), so the successor can
+  weigh the lead instead of inheriting it blind.
+- **Ruled out** — record what you eliminated and why, so the successor doesn't
+  re-walk a dead end you already closed.
+
+Make the marker explicit and scannable — e.g. `Verified:`, `Assumption:`,
+`Provisional —`, `Unconfirmed —`, `Ruled out:`. A one-word label costs nothing; a
+successor mistaking a guess for a finding can cost it an entire session. The
+investigation example models this — its root-cause lead is marked `provisional` and
+its eliminated suspects `ruled out`.
+
+Keep it lean, though: record *how* you know only when that detail is load-bearing for
+the next session's work or saves it from repeating a step — not as ceremony. When
+concise framing and exhaustive proof-tracking pull against each other, favor concise.
+
 Use this structure (adapt section names to the project's existing handoffs):
 
 ```markdown
@@ -139,7 +170,11 @@ Use this structure (adapt section names to the project's existing handoffs):
   what to attach to or open first, the orientation entry-point doc.
 
 ## What this cycle accomplished
-- Concrete, numbered list. What was found, built, fixed, ruled out. Cite sources.
+- Concrete, numbered list. What was found, built, fixed, ruled out. Cite sources,
+  and label each load-bearing claim verified vs. assumed (see "Label confidence"):
+  - `Verified:` <claim> — <how you confirmed it: command run, file:line read, or repro observed>.
+  - `Assumption:` <lead> — <what would confirm/refute it, how much rests on it, where it came from>.
+  - `Ruled out:` <eliminated suspect> — <why, so the successor doesn't re-walk it>.
 
 ## Objective for next session
 - The single next goal, stated plainly. What "done" looks like.

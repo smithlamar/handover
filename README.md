@@ -35,8 +35,11 @@ session", the skill runs three steps:
 
 The point of a handoff is that the successor has *zero memory* of the prior
 session, so the doc must be specific and self-contained — every assumption spelled
-out or reachable via a path it cites. The brief lives **in the doc**, not in a
-prompt you have to copy, so you can't lose it by forgetting to copy a prompt.
+out or reachable via a path it cites. It also marks confidence as it goes — what's
+**verified** (and how it was confirmed) versus what's an **assumption or lead** — so
+the successor doesn't mistake a hunch for a fact and chase it down a dead end. The
+brief lives **in the doc**, not in a prompt you have to copy, so you can't lose it by
+forgetting to copy a prompt.
 
 ## Resuming
 

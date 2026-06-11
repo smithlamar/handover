@@ -35,27 +35,35 @@
   map; this handoff is the narrative + the next move.
 
 ## What this cycle accomplished
-1. **Re-validated the repro** on `2.14.0` (p99 climbs from 40ms to >800ms under the
-   enrichment load profile) — no code change required to reproduce.
-2. **Isolated the slow path** via heap diffing across the load test: snapshot at
-   calm baseline, drive load, snapshot again, diff. Allocation growth concentrated
-   in a single map held by `EnrichmentCache`.
-3. **Found the unbounded map** — `EnrichmentCache.entries` grows monotonically and
-   is never trimmed under the load profile. Provisional root cause, BUT the cache
-   *does* have a TTL sweep (`sweepExpired`, runs every 60s) → so the leak is
-   probably a path that inserts without setting an expiry, not a missing sweep.
-   Label provisional pending a call-site tie-in.
-4. **Ruled out `RequestContext.metadata`** — it grows during a request but is
-   released on response; not the leak (removed from suspects).
-5. **`grep` + call-graph mapped the insert sites:** `EnrichmentCache.put` (sets
-   TTL, looks correct) and a second path `EnrichmentCache.putRaw`
-   (`internal/enrich/cache.go:212`) that inserts **without** a TTL — the likely
-   culprit. Callers of `putRaw`: the batch-prefetch warmup
+
+> Each item is tagged with its confidence — `Verified:` (confirmed this session),
+> `Provisional —` / `Assumption:` (a lead, not a finding), `Ruled out:` (eliminated).
+> Don't act on a lead as if it were proven.
+
+1. **`Verified:` the repro** on `2.14.0` — p99 climbs from 40ms to >800ms under the
+   enrichment load profile; no code change required to reproduce.
+2. **`Verified:` the slow path** — heap diffing across the load test (snapshot at calm
+   baseline, drive load, snapshot again, diff) concentrates allocation growth in a
+   single map held by `EnrichmentCache`.
+3. **`Verified:` the map is unbounded** — `EnrichmentCache.entries` grows monotonically
+   and is never trimmed under the load profile.
+   **`Provisional —` root cause:** the cache *does* run a TTL sweep (`sweepExpired`,
+   every 60s), so the leak is probably an insert that sets no expiry rather than a
+   missing sweep. *Origin:* the sweep exists yet the map still grows. *Confirm by:*
+   tying it to a specific TTL-less insert (the objective below). The whole next step
+   rests on this holding.
+4. **`Ruled out:` `RequestContext.metadata`** — it grows during a request but is
+   released on response; not the leak.
+5. **`Verified:` the insert sites** (`grep` + call-graph) — `EnrichmentCache.put` sets a
+   TTL (correct), while `EnrichmentCache.putRaw` (`internal/enrich/cache.go:212`)
+   inserts **without** a TTL; its callers are the batch-prefetch warmup
    (`prefetch.go:88`) and the fallback hydrate (`hydrate.go:140`).
-6. **Captured a candidate trace** showing `putRaw` from the prefetch warmup, but
-   ⚠️ **the change-test was inconclusive** — disabling prefetch did not fully flatten
-   the growth, so there is likely a **second** TTL-less insert still in play.
-   Mapping every `putRaw` caller is the unfinished objective.
+   **`Assumption:` `putRaw` is the culprit** — *origin:* it's the only TTL-less path
+   found so far. *Confirm by:* the caller-logging step below.
+6. **`Provisional —` a second TTL-less insert is still in play** — a captured trace
+   shows `putRaw` from the prefetch warmup, but ⚠️ the change-test was **inconclusive**:
+   disabling prefetch did not fully flatten growth. *Origin:* the residual growth after
+   prefetch was disabled. Mapping every `putRaw` caller is the unfinished objective.
 
 ## Objective for next session: FINISH MAPPING THE TTL-LESS INSERTS
 1. **Definitive locate (do this FIRST):** add a temporary assertion/log in `putRaw`
