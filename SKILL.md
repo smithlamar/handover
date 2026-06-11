@@ -55,7 +55,7 @@ Handover progress:
 - [ ] Confirm the next session's goal (ask if not stated)
 - [ ] Step 1: Clean up stale handoff docs
 - [ ] Step 2: Write the new handoff doc (detail calibrated to the goal)
-- [ ] Step 3: Persist the docs (commit or leave untracked, per the user) + hand the user the pickup line
+- [ ] Step 3: Persist the docs (untracked by default; commit only on instruction or precedent) + hand the user the pickup line
 ```
 
 ## Step 1: Clean up stale handoff docs
@@ -220,18 +220,21 @@ low-stakes, mechanical work. Make both sides concrete for the project.
 
 ## Step 3: Persist the docs + hand the user the pickup line
 
-**Whether handoff docs are committed to the repo is the user's call.** Some
-projects track them in git; others keep them out of the repo — gitignored, in a
-local-only directory, or simply left untracked. Follow the established convention
-if there is one (match how existing handoff docs are handled). If there's no
-precedent and the user hasn't said, ask which they want before touching git.
+**Default to leaving handoff docs out of git.** They're session ephemera, not
+project documentation — most repos don't want them in history. Commit them only
+when the user says to, or when the project has an established convention of
+tracking them (match how existing handoff docs are handled). Absent either,
+leave the docs untracked and say so when you hand back the pickup line — the
+user can override on the spot. Under-committing is trivially recoverable;
+an unwanted commit is not.
 
-- **If committing:** stage the new handoff doc together with the deletions of the
-  stale ones into a **single docs-only commit** — e.g.
-  `docs: drop N stale handoff(s) + add <new handoff>`. Don't bundle code changes
-  into this commit.
-- **If not committing (or not a git repo):** leave the docs untracked and note in
-  the handoff that its state lives as files on disk, not in version history.
+- **If not committing (the default, or not a git repo):** leave the docs
+  untracked and note in the handoff that its state lives as files on disk, not
+  in version history.
+- **If committing (on instruction or precedent):** stage the new handoff doc
+  together with the deletions of the stale ones into a **single docs-only
+  commit** — e.g. `docs: drop N stale handoff(s) + add <new handoff>`. Don't
+  bundle code changes into this commit.
 
 **Hand the user a short pickup line, not a long prompt.** The full brief already
 lives in the doc's **Resume here** block, so the user doesn't paste a prompt — they
