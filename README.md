@@ -31,9 +31,9 @@ One command, three flavors — the argument picks the phase:
 - `/handover cleanup` — verify the tracked work is completely done, then delete
   the handover artifacts; use when no successor session follows.
 
-Natural language works too: "prep a handoff", "hand off", or "wrap up the
-session" prep one; `Pickup handover <file>` resumes; "clean up the handover
-docs" cleans up. The slash forms are just the deterministic spelling — a
+Natural language works too: `prep a handoff`, `hand off`, or `wrap up the
+session` all produce a new handoff doc and its pickup line; `Pickup handover
+<file>` resumes; `clean up the handover docs` cleans up. The slash forms are just the deterministic spelling — a
 filename argument means resume, the literal `cleanup` means clean up, and
 anything else (or nothing) means prep.
 
@@ -63,8 +63,9 @@ Prepping runs three steps:
    **Resume here** brief (goal, read order, starting state), then pickup state,
    what-this-cycle-accomplished, next objective, an execution guideline (when to
    pause vs. proceed), deferred items, and working-tree state.
-3. **Persist + hand you the pickup line** — commit the docs (or leave them
-   untracked, your call), then give you the short pickup line to paste into a
+3. **Persist + hand you the pickup line** — leave the docs untracked by default
+   (they're session ephemera; committed only if you say so or the project
+   already tracks them), then give you the short pickup line to paste into a
    fresh session.
 
 The point of a handoff is that the successor has *zero memory* of the prior
@@ -113,7 +114,7 @@ version, re-copy over the same location.
 
 ## Verify
 
-Start a fresh session and ask it to "prep a handoff" — it should run the workflow.
+Start a fresh session and ask it to `prep a handoff` — it should run the workflow.
 To test the other direction, point a fresh session at a handoff doc with
 `Pickup handover <file>` and confirm it reads the brief and resumes. To test
 cleanup, say `/handover cleanup` in a session whose work is done and confirm it
