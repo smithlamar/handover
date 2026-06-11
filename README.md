@@ -70,24 +70,24 @@ Claude Code discovers skills from two locations:
   with collaborators)
 
 This repository's root *is* the skill (it contains `SKILL.md`), so install it by
-placing the repo's contents at `<skills-dir>/handover/`. From inside your clone:
+copying the repo's contents to `<skills-dir>/handover/`. From inside your clone:
 
 ```sh
-# Copy it in (simplest)
+# Personal, all projects (macOS / Linux)
 cp -r . ~/.claude/skills/handover
 
-# Or symlink your clone, so edits stay live and version-controlled in place
-ln -s "$(pwd)" ~/.claude/skills/handover
+# Or scoped to one project
+cp -r . <your-project>/.claude/skills/handover
 ```
 
-On Windows, use a directory junction instead of a symlink (no admin required), run
-from the repo root:
+On Windows (PowerShell):
 
-```bat
-cmd /c mklink /J "%USERPROFILE%\.claude\skills\handover" "%CD%"
+```powershell
+Copy-Item -Recurse . "$env:USERPROFILE\.claude\skills\handover"
 ```
 
-The skill loads at the start of the next session.
+The skill loads at the start of the next session. To pick up a newer version,
+re-copy over the same location.
 
 ## Verify
 
