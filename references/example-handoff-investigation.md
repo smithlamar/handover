@@ -1,14 +1,15 @@
 # Orders Service — Latency Investigation Handoff (2026-05-27)
 
-> Replaces `handoff-2026-05-25.md`, now superseded. That doc's objective ("find
-> the source of the p99 spike") was the live hunt; **this cycle isolated the slow
-> path to the order-enrichment cache and found the unbounded growth**, but did not
-> finish mapping which call site fails to evict. This doc carries that forward.
+> Second cycle of this doc — the 2026-05-25 version is superseded by this one.
+> That cycle's objective ("find the source of the p99 spike") was the live hunt;
+> **this cycle isolated the slow path to the order-enrichment cache and found the
+> unbounded growth**, but did not finish mapping which call site fails to evict.
+> This doc carries that forward.
 
 ## Resume here
 
-> The brief for the next session. If you were told to "pick up handover <this
-> file>", start here, then read in the order below before acting.
+> The brief for the next session. If you were pointed here with
+> `/handover <this file>`, start here, then read in the order below before acting.
 
 - **Goal:** Finish mapping the TTL-less cache inserts — find every call site that
   inserts into `EnrichmentCache` without an expiry, then confirm the fix shape and
@@ -45,11 +46,11 @@
 
 1. **`Verified:` the repro** on `2.14.0` — p99 climbs from 40ms to >800ms under the
    enrichment load profile; no code change required to reproduce.
-2. **`Verified:` the slow path** — heap diffing across the load test (snapshot at calm
-   baseline, drive load, snapshot again, diff) concentrates allocation growth in a
-   single map held by `EnrichmentCache`.
-3. **`Verified:` the map is unbounded** — `EnrichmentCache.entries` grows monotonically
-   and is never trimmed under the load profile.
+2. **`Verified:` the slow path** — heap diffing across the load test (snapshot at
+   calm baseline, drive load, snapshot again, diff) concentrates allocation growth
+   in a single map held by `EnrichmentCache`.
+3. **`Verified:` the map is unbounded** — `EnrichmentCache.entries` grows
+   monotonically and is never trimmed under the load profile.
    **`Provisional —` root cause:** the cache *does* run a TTL sweep (`sweepExpired`,
    every 60s), so the leak is probably an insert that sets no expiry rather than a
    missing sweep. *Origin:* the sweep exists yet the map still grows. *Confirm by:*
@@ -57,18 +58,20 @@
    rests on this holding.
 4. **`Ruled out:` `RequestContext.metadata`** — it grows during a request but is
    released on response; not the leak.
-5. **`Verified:` the insert sites** (`grep` + call-graph) — `EnrichmentCache.put` sets a
-   TTL (correct), while `EnrichmentCache.putRaw` (`internal/enrich/cache.go:212`)
-   inserts **without** a TTL; its callers are the batch-prefetch warmup
-   (`prefetch.go:88`) and the fallback hydrate (`hydrate.go:140`).
+5. **`Verified:` the insert sites** (`grep` + call-graph) — `EnrichmentCache.put`
+   sets a TTL (correct), while `EnrichmentCache.putRaw`
+   (`internal/enrich/cache.go:212`) inserts **without** a TTL; its callers are the
+   batch-prefetch warmup (`prefetch.go:88`) and the fallback hydrate
+   (`hydrate.go:140`).
    **`Assumption:` `putRaw` is the culprit** — *origin:* it's the only TTL-less path
    found so far. *Confirm by:* the caller-logging step below.
 6. **`Provisional —` a second TTL-less insert is still in play** — a captured trace
-   shows `putRaw` from the prefetch warmup, but ⚠️ the change-test was **inconclusive**:
-   disabling prefetch did not fully flatten growth. *Origin:* the residual growth after
-   prefetch was disabled. Mapping every `putRaw` caller is the unfinished objective.
+   shows `putRaw` from the prefetch warmup, but ⚠️ the change-test was
+   **inconclusive**: disabling prefetch did not fully flatten growth. *Origin:* the
+   residual growth after prefetch was disabled. Mapping every `putRaw` caller is
+   the unfinished objective.
 
-## Objective for next session: FINISH MAPPING THE TTL-LESS INSERTS
+## Objective for next session: finish mapping the TTL-less inserts
 1. **Definitive locate (do this FIRST):** add a temporary assertion/log in `putRaw`
    that records the caller (stack frame) on every insert, run the load profile, and
    collect the full set of call sites that hit it. ⚠️ **Remove the temporary log
@@ -122,4 +125,5 @@ orders-service : clean, branch investigate/p99-latency, HEAD a1b9f3c, version 2.
 - Key files: `internal/enrich/cache.go` (the cache under investigation),
   `docs/investigation-notes.md` (source of truth, updated this session),
   `scripts/heap-diff.sh` + `profiles/baseline.pprof` (repro tooling),
-  `handoff-2026-05-27.md` (this file, replaced `handoff-2026-05-25.md`).
+  `handoff-p99-latency.md` (this file, updated in place this cycle — the
+  2026-05-25 version is superseded).

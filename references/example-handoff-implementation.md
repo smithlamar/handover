@@ -6,8 +6,8 @@
 
 ## Resume here
 
-> The brief for the next session. If you were told to "pick up handover <this
-> file>", start here, then read in the order below before acting.
+> The brief for the next session. If you were pointed here with
+> `/handover <this file>`, start here, then read in the order below before acting.
 
 - **Goal:** Implement `CustomerStatsRepository` against the database — including
   designing the implementation, since none exists yet. The one open decision is
