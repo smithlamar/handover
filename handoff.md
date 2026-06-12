@@ -1,11 +1,8 @@
 # Producing a handoff
 
 The PRODUCE phase: distill the session into a new handoff doc, retire stale
-ones, and hand back the pickup line. A handoff document lets a successor — a fresh
-agent instance with zero memory of this conversation, or a human teammate — resume
-work without re-deriving what already happened. The successor's only inputs are the
-handoff doc and whatever it points to, so the doc must be specific and
-self-contained.
+ones, and hand back the pickup line. The successor has zero memory of this
+session and only the doc to go on, so it must be specific and self-contained.
 
 ## The next session's goal is a required input
 
