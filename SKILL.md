@@ -1,6 +1,6 @@
 ---
 name: handover
-description: Produce, pick up, or clean up a session handoff doc. Slash-only: /handover <goal> produces one, /handover <file> picks one up, /handover cleanup closes out.
+description: "Produce, pick up, or clean up a session handoff doc. Slash-only: /handover <goal> produces one, /handover <file> picks one up, /handover cleanup closes out."
 argument-hint: [next-session goal | handoff-filename | cleanup]
 disable-model-invocation: true
 ---
