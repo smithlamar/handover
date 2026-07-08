@@ -20,5 +20,13 @@ to are most likely all you have to go on.
    (or confirm "not a git repo"). If reality disagrees — different HEAD, a dirty
    tree, a file the brief said was committed is missing — surface it before
    proceeding; the handoff may be stale or a step didn't land.
-5. **Restate the goal and your first steps, then continue**, respecting the
+5. **Work in your current directory.** Act in the worktree or clone this doc was
+   handed to you in — do NOT `cd` elsewhere because a path or note in the doc names
+   another location. Paths in a handoff are repo-relative unless stated otherwise; a
+   worktree/clone path (e.g. where the doc was authored) is provenance, not a
+   destination. Confirm with `git rev-parse --show-toplevel` before you branch or
+   write. If the work stacks on an unmerged branch, create your feature branch here
+   off the **remote** ref (`origin/<producer>`), not the local producer branch — it
+   may be checked out in another worktree, so git will refuse.
+6. **Restate the goal and your first steps, then continue**, respecting the
    handoff's execution guideline (pause vs. proceed).

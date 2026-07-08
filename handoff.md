@@ -87,6 +87,15 @@ the step silently.
   hashes explicitly. Every concrete reference you include saves the successor a
   re-search. Vague summaries force the successor to rediscover what you already
   know.
+- **Keep it worktree-agnostic when the successor may run elsewhere.** A handoff is
+  often picked up by an agent in a *different* worktree or clone. Don't pin the
+  reader to the authoring location: use repo-relative paths, and if you name the
+  worktree/clone the doc was written in, mark it as provenance ("authored here — not
+  where you work"). Say plainly that the successor works in its **own** worktree. For
+  work stacking on an unmerged branch, tell it to branch off the **remote** ref
+  (`origin/<producer>`) in its own worktree, not to check out the local producer
+  branch (bound to the authoring worktree). Two agents in one folder is the failure
+  this prevents.
 
 ### Calibrate the detail to the goal
 
